@@ -1,0 +1,69 @@
+# Render "Blueprint" — lets you spin up the API + Postgres DB together in
+# one click from the Render dashboard ("New" -> "Blueprint", point it at
+# this repo) instead of configuring each piece by hand.
+# See DEPLOYMENT.md for the couple of values you still fill in yourself.
+
+databases:
+  - name: dost-lms-db
+    plan: free
+    databaseName: dost_academy
+    user: dost_academy
+
+services:
+  - type: web
+    name: dost-lms-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/lms/status
+    envVars:
+      - key: APP_NAME
+        value: "DOST Academy System"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        fromService:
+          type: web
+          name: dost-lms-backend
+          property: host
+      - key: FRONTEND_URL
+        sync: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: dost-lms-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: dost-lms-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: dost-lms-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: dost-lms-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: dost-lms-db
+          property: password
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: MAIL_MAILER
+        value: log
+      - key: PASSWORD_RESET_OVERRIDE_EMAIL
+        sync: false

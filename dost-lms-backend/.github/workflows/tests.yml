@@ -1,0 +1,61 @@
+name: Backend Tests
+
+on:
+  push:
+    paths:
+      - 'dost-lms-backend/**'
+  pull_request:
+    paths:
+      - 'dost-lms-backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dost-lms-backend
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: dost_academy_testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, dom, fileinfo, gd
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
+        env:
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: dost_academy_testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+      - name: Run tests
+        run: php artisan test
+        env:
+          DB_HOST: 127.0.0.1
+          DB_DATABASE: dost_academy_testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
