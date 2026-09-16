@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 | The 'login' route carries its own 5/min/IP rate limiter (RouteServiceProvider).
 */
 
+// Public, unauthenticated — used by Render's health check on deploy.
+Route::get('/health', fn () => response()->json(['status' => 'ok']));
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:password-reset');

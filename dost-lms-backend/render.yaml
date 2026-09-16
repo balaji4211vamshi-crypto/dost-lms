@@ -16,7 +16,7 @@ services:
     dockerfilePath: ./dost-lms-backend/Dockerfile
     dockerContext: ./dost-lms-backend
     plan: free
-    healthCheckPath: /api/lms/status
+    healthCheckPath: /api/health
     envVars:
       - key: APP_NAME
         value: "DOST Academy System"
