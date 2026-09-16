@@ -2,7 +2,7 @@
 # (php artisan serve) rather than nginx+php-fpm — simpler to get right for a
 # free/demo deployment, and it's the same server the local dev setup script
 # already uses via setup-and-run.command.
-FROM php:8.2-cli
+FROM php:8.4-cli
 
 RUN apt-get update && apt-get install -y \
     git unzip libpq-dev libzip-dev libonig-dev \
