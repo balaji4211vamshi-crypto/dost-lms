@@ -13,8 +13,8 @@ services:
   - type: web
     name: dost-lms-backend
     runtime: docker
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
+    dockerfilePath: ./dost-lms-backend/Dockerfile
+    dockerContext: ./dost-lms-backend
     plan: free
     healthCheckPath: /api/lms/status
     envVars:
